@@ -2,12 +2,22 @@ import React from "react";
 
 import styled from "styled-components";
 import { ThemeContextProvider } from "./context/ThemeContext";
+import { Content } from "./components/Content";
+import { UserProps } from "./types";
+import { Index } from "./components/UserData/Index";
 
 function App(): React.ReactElement {
+  const [user, setUser] = React.useState<UserProps | null>(null);
+
+  function setUserData(user: UserProps | null): void {
+    setUser(user);
+  }
+
   return (
     <ThemeContextProvider>
       <Container>
-        <h1>Hello World</h1>
+        <Content setUser={setUserData} />
+        {user && <Index user={user} />}
       </Container>
     </ThemeContextProvider>
   );
@@ -19,7 +29,7 @@ const Container = styled.main`
   align-items: center;
   min-height: 100vh;
   flex-direction: column;
-  background-color: #282c34;
+  background-color: ${(props) => props.theme.colors.background};
   padding: 3.1rem 2.4rem;
 
   @media (min-width: 768px) {
