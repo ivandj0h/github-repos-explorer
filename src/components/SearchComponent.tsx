@@ -53,7 +53,7 @@ export const SearchComponent: React.FC = () => {
                 {!isLoading && users.length > 0 && (
                     users.map(user => (
                         <div key={user.login} className="py-1">
-                            <h3>Showing users for "{user.login}"</h3>
+                            <h3>Showing users for {'"' + user.login + '"'}</h3>
                             <div className="flex justify-between items-center bg-black border border-b-1 border-r-0 border-l-0 border-t-0 border-blue-600 px-3 py-2 cursor-pointer mt-10"
                                  onClick={(e) => toggleAccordion(e, user.login, setOpenAccordion)}>
                                 <div className="flex items-center">
