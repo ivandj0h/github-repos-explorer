@@ -1,12 +1,15 @@
 import React from "react";
 
 import styled from "styled-components";
+import { ThemeContextProvider } from "./context/ThemeContext";
 
 function App(): React.ReactElement {
   return (
-    <Container>
-      <h1>Hello World</h1>
-    </Container>
+    <ThemeContextProvider>
+      <Container>
+        <h1>Hello World</h1>
+      </Container>
+    </ThemeContextProvider>
   );
 }
 
