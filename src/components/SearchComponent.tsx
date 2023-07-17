@@ -1,23 +1,12 @@
 "use client";
 
 import React, { useState, FormEvent } from "react";
-import axios from 'axios';
+import { searchHandler, toggleAccordion } from "@/utils";
 import { FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import LoadingText from "@divy-work/react-loading-text"
+import {Repo, User} from "@/types";
 
-type User = {
-    login: string,
-    url: string,
-    avatar_url: string,
-}
-
-type Repo = {
-    name: string,
-    description: string,
-    stargazers_count: number,
-    html_url: string,
-}
 
 export const SearchComponent: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -26,38 +15,20 @@ export const SearchComponent: React.FC = () => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false); // new loading state
 
-    const searchHandler = async (e: FormEvent) => {
+    const searchHandlerWrapper = async (e: FormEvent) => {
         e.preventDefault();
-        setIsLoading(true); // set loading to true when search begins
-
-        const userRes = await axios.get(`https://api.github.com/search/users?q=${searchTerm}`);
-        const foundUsers = userRes.data.items.slice(0, 3);
-        setUsers(foundUsers);
-
-        for (const user of foundUsers) {
-            const repoRes = await axios.get(`https://api.github.com/users/${user.login}/repos`);
-            setRepos(prevRepos => ({
-                ...prevRepos,
-                [user.login]: repoRes.data.slice(0, 3),
-            }));
-        }
-
-        setSearchTerm("");
-
-        setTimeout(() => {
-            setIsLoading(false); // set loading to false after 3 seconds
-        }, 3000);
+        searchHandler(searchTerm, setUsers, setRepos, setIsLoading, setSearchTerm);
     }
 
-    const toggleAccordion = (e: any, username: string) => {
-        e.stopPropagation(); // menambahkan ini untuk mencegah event bubbling
-        setOpenAccordion(openAccordion === username ? null : username);
+    const toggleAccordionWrapper = (e: any, username: string) => {
+        toggleAccordion(e, username, setOpenAccordion);
     }
+
 
     return (
         <div className="w-full">
             <h1 className="mb-4 text-3xl font-bold text-gray-500 dark:text-white text-center">GitHub Repositories Explorer</h1>
-            <form onSubmit={searchHandler}>
+            <form onSubmit={searchHandlerWrapper}>
                 <div>
                     <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Enter Username</label>
                     <div className="relative mb-4">
@@ -83,7 +54,7 @@ export const SearchComponent: React.FC = () => {
                     users.map(user => (
                         <div key={user.login} className="py-1">
                             <div className="flex justify-between items-center bg-black border border-b-1 border-r-0 border-l-0 border-t-0 border-blue-600 px-3 py-2 cursor-pointer mt-10"
-                                 onClick={(e) => toggleAccordion(e, user.login)}>
+                                 onClick={(e) => toggleAccordion(e, user.login, setOpenAccordion)}>
                                 <div className="flex items-center">
                                     <img src={user.avatar_url} alt={user.login} className="w-6 h-6 rounded-full mr-2" />
                                     <h2 className="text-lg font-bold text-gray-900 dark:text-blue-700">
